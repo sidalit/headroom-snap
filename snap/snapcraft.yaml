@@ -1,0 +1,92 @@
+name: headroom
+base: core26
+adopt-info: headroom
+title: Headroom
+summary: Local context-compression proxy and MCP server for AI applications
+description: |
+  Headroom compresses prompts and tool output before forwarding requests
+  to your LLM provider. It includes an HTTP proxy, MCP server, code-aware
+  compression and AWS Bedrock support.
+
+  **Examples**
+
+     headroom proxy --port 8787
+     headroom mcp serve
+     headroom.cache-ttl --help
+
+  **File access**
+
+  Headroom can use files in your home directory. To also use USB drives
+  and other removable media (/media, /mnt), run:
+
+     sudo snap connect headroom:removable-media
+license: Apache-2.0
+grade: stable
+confinement: strict
+website: https://docs.headroomlabs.ai
+source-code: https://github.com/headroomlabs-ai/headroom
+issues: https://github.com/headroomlabs-ai/headroom/issues
+contact: https://github.com/sidalit/headroom-snap/issues
+
+platforms:
+  amd64:
+  arm64:
+
+environment:
+  HEADROOM_WORKSPACE_DIR: $SNAP_USER_COMMON
+  XDG_CACHE_HOME: $SNAP_USER_COMMON/cache
+  HF_HOME: $SNAP_USER_COMMON/cache/huggingface
+  HEADROOM_UPDATE_CHECK: "off"
+
+apps:
+  headroom:
+    command: bin/headroom
+    plugs:
+      - network
+      - network-bind
+      - home
+      - removable-media
+  cache-ttl:
+    command: bin/headroom-cache-ttl
+    plugs:
+      - home
+      - removable-media
+
+parts:
+  python-runtime:
+    plugin: nil
+    stage-packages:
+      - libpython3.14-minimal
+      - libpython3.14-stdlib
+      - python3-minimal
+      - python3.14-minimal
+      - python3.14-venv
+
+  headroom:
+    plugin: uv
+    after: [python-runtime]
+    source: https://github.com/headroomlabs-ai/headroom.git
+    # renovate: depName=headroomlabs-ai/headroom
+    source-tag: 'v0.41.0'
+    uv-extras:
+      - proxy
+      - code
+      - bedrock
+    build-snaps:
+      - astral-uv
+      - rustup
+    build-packages:
+      - build-essential
+      - patchelf
+      - pkg-config
+    build-environment:
+      - PATH: $CRAFT_PART_INSTALL/bin:$CRAFT_STAGE/usr/bin:$PATH
+    override-pull: |
+      craftctl default
+      version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+      craftctl set version="$version"
+    override-build: |
+      craftctl default
+      ln -sf python3 "$CRAFT_PART_INSTALL/bin/python"
+      install -Dm644 LICENSE "$CRAFT_PART_INSTALL/share/doc/headroom/LICENSE"
+      install -Dm644 NOTICE "$CRAFT_PART_INSTALL/share/doc/headroom/NOTICE"
