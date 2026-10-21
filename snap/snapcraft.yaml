@@ -1,6 +1,6 @@
 name: headroom
 base: core26
-adopt-info: headroom
+version: '0.41.0'
 title: Headroom
 summary: Local context-compression proxy and MCP server for AI applications
 description: |
@@ -66,8 +66,7 @@ parts:
     plugin: uv
     after: [python-runtime]
     source: https://github.com/headroomlabs-ai/headroom.git
-    # renovate: depName=headroomlabs-ai/headroom
-    source-tag: 'v0.41.0'
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
     uv-extras:
       - proxy
       - code
@@ -81,10 +80,6 @@ parts:
       - pkg-config
     build-environment:
       - PATH: $CRAFT_PART_INSTALL/bin:$CRAFT_STAGE/usr/bin:$PATH
-    override-pull: |
-      craftctl default
-      version=$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
-      craftctl set version="$version"
     override-build: |
       craftctl default
       ln -sf python3 "$CRAFT_PART_INSTALL/bin/python"
