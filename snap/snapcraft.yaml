@@ -24,8 +24,12 @@ license: Apache-2.0
 grade: stable
 confinement: strict
 website: https://docs.headroomlabs.ai
-source-code: https://github.com/headroomlabs-ai/headroom
-issues: https://github.com/headroomlabs-ai/headroom/issues
+source-code:
+  - https://github.com/headroomlabs-ai/headroom
+  - https://github.com/sidalit/headroom-snap
+issues:
+  - https://github.com/headroomlabs-ai/headroom/issues
+  - https://github.com/sidalit/headroom-snap/issues
 contact: https://github.com/sidalit/headroom-snap/issues
 
 platforms:
