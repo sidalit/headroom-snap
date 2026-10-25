@@ -2,6 +2,7 @@ name: headroom
 base: core26
 version: '0.41.0'
 title: Headroom
+icon: snap/gui/headroom.png
 summary: Local context-compression proxy and MCP server for AI applications
 description: |
   Headroom compresses prompts and tool output before forwarding requests
